@@ -40,7 +40,7 @@ public class SasFileReaderJson extends SasFileReaderImpl {
             else if (values.get(i) instanceof Long)
                 objectNode.put(column.getName(), (long) values.get(i));
             else
-                objectNode.put(column.getName(), (byte[]) values.get(i));
+                objectNode.put(column.getName(), (String) values.get(i));
         }
         return objectNode;
     }

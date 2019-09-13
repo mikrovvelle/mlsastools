@@ -19,6 +19,11 @@ class SasFileReaderJsonTest {
             Objects.requireNonNull(classLoader.getResource("all_rand_normal.sas7bdat")).getFile());
     private SasFileReaderJson sasFileReader = new SasFileReaderJson(fis);
 
+    private FileInputStream acrofis = new FileInputStream(
+            Objects.requireNonNull(classLoader.getResource("charset_acro.sas7bdat")).getFile());
+    private SasFileReaderJson acroReader = new SasFileReaderJson(acrofis);
+
+
     SasFileReaderJsonTest() throws FileNotFoundException {
     }
 
@@ -51,5 +56,21 @@ class SasFileReaderJsonTest {
         ArrayNode arrayNode = sasFileReader.readDataSetToArrayNode();
         assertEquals(arrayNode.size(), sasFileReader.getSasFileProperties().getRowCount());
         assertNotEquals(arrayNode.get(5).get("x4"), arrayNode.get(6).get("x4"));
+    }
+
+    @Test
+    void readCharsetAcroToObjectNodeList() throws IOException {
+        assertNotNull(acroReader);
+        List<ObjectNode> objectNodeList = acroReader.readDataSetToObjectArray();
+        assertEquals(150, objectNodeList.size());
+    }
+
+    @Test
+    void readCharsetAcroToJacksonArray() throws IOException {
+        ArrayNode arrayNode = acroReader.readDataSetToArrayNode();
+        assertEquals(150, arrayNode.size());
+        assertEquals("Iris-setosa", arrayNode.get(5).get("Species").textValue());
+        assertEquals("Iris-versicolor", arrayNode.get(92).get("Species").textValue());
+        assertEquals(2.8, arrayNode.get(122).get("SepalWidth").asDouble());
     }
 }
