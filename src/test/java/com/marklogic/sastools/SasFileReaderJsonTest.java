@@ -1,5 +1,6 @@
 package com.marklogic.sastools;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class SasFileReaderJsonTest {
 
     private ClassLoader classLoader = this.getClass().getClassLoader();
+    private ObjectMapper objectMapper = new ObjectMapper();
+
     private FileInputStream fis = new FileInputStream(
             Objects.requireNonNull(classLoader.getResource("all_rand_normal.sas7bdat")).getFile());
     private SasFileReaderJson sasFileReader = new SasFileReaderJson(fis);
@@ -30,6 +33,38 @@ class SasFileReaderJsonTest {
     private FileInputStream fwlFis = new FileInputStream(
             Objects.requireNonNull(classLoader.getResource("file_with_label.sas7bdat")).getFile());
     private SasFileReaderJson fwlReader = new SasFileReaderJson(fwlFis);
+
+    private FileInputStream mdmcFis = new FileInputStream(
+            Objects.requireNonNull(classLoader.getResource("mix_data_with_missing_char.sas7bdat")).getFile());
+    private SasFileReaderJson mdmcReader = new SasFileReaderJson(mdmcFis);
+
+    private static class XRow {
+        int x1;
+        int x2;
+        String x3;
+        String x4;
+        String x5;
+
+        public void setX1(int x1) {
+            this.x1 = x1;
+        }
+
+        public void setX2(int x2) {
+            this.x2 = x2;
+        }
+
+        public void setX3(String x3) {
+            this.x3 = x3;
+        }
+
+        public void setX4(String x4) {
+            this.x4 = x4;
+        }
+
+        public void setX5(String x5) {
+            this.x5 = x5;
+        }
+    }
 
     SasFileReaderJsonTest() throws FileNotFoundException {
     }
@@ -94,6 +129,23 @@ class SasFileReaderJsonTest {
         assertNotNull(fwlReader);
         List<ObjectNode> objectNodeList = fwlReader.readDataSetToObjectArray();
         assertEquals(2, objectNodeList.size());
+    }
+
+    @Test
+    void  readDataWithMissingChar() throws IOException {
+        assertNotNull(mdmcReader);
+        List<ObjectNode> objectNodeList = mdmcReader.readDataSetToObjectArray();
+        ObjectNode row4 = objectNodeList.get(3);
+        String row4string = row4.toString();
+
+        Object o3 = objectMapper.readValue(row4string, Object.class);
+        assertNotNull(o3, "generated JSON string should be parsable as JSON");
+
+        XRow pojo3 = objectMapper.readValue(row4string, XRow.class);
+        assertNotNull(pojo3, "generate JSON string should be parsable as a POJO");
+        assertNull(pojo3.x3, "JSON null should be parsed as null");
+
+        assertEquals(1, pojo3.x1, "non-null values in a row with null should be intact");
     }
 
 }
