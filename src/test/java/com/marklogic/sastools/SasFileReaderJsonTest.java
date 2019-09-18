@@ -142,10 +142,11 @@ class SasFileReaderJsonTest {
         assertNotNull(o3, "generated JSON string should be parsable as JSON");
 
         XRow pojo3 = objectMapper.readValue(row4string, XRow.class);
-        assertNotNull(pojo3, "generate JSON string should be parsable as a POJO");
+        assertNotNull(pojo3, "generated JSON string should be parsable as a POJO");
         assertNull(pojo3.x3, "JSON null should be parsed as null");
 
         assertEquals(1, pojo3.x1, "non-null values in a row with null should be intact");
+        assertEquals("1", pojo3.x4, "non-null values in a row with null should be intact");
     }
 
 }

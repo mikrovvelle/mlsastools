@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public class SasFileReaderJson extends SasFileReaderImpl {
@@ -39,6 +40,11 @@ public class SasFileReaderJson extends SasFileReaderImpl {
                 objectNode.put(column.getName(), (int) values.get(i));
             else if (values.get(i) instanceof Long)
                 objectNode.put(column.getName(), (long) values.get(i));
+            else if (values.get(i) instanceof Date) {
+                // TODO: convert to ISO dateTime?
+                String dateString = (values.get(i)).toString();
+                objectNode.put(column.getName(), dateString);
+            }
             else
                 objectNode.put(column.getName(), (String) values.get(i));
         }
