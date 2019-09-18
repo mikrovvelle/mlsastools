@@ -38,6 +38,18 @@ class SasFileReaderJsonTest {
             Objects.requireNonNull(classLoader.getResource("mix_data_with_missing_char.sas7bdat")).getFile());
     private SasFileReaderJson mdmcReader = new SasFileReaderJson(mdmcFis);
 
+    // TODO: Need test files with legit Date[Time] columns
+    //  SAS7Bdat test files from Parso do not include column types, so they won't get treated as dates
+    //  Column types should be under `SasFileReaderJson.sasFileParser.columns[n].format.name`
+    //  (SAS files received from real sources do appear to work correctly)
+    private FileInputStream dtFis = new FileInputStream(
+            Objects.requireNonNull(classLoader.getResource("only_datetime.sas7bdat")).getFile());
+    private SasFileReaderJson dateTimeReader = new SasFileReaderJson(dtFis);
+
+    private FileInputStream tFis = new FileInputStream(
+            Objects.requireNonNull(classLoader.getResource("time_formats.sas7bdat")).getFile());
+    private SasFileReaderJson timeReader = new SasFileReaderJson(tFis);
+
     private static class XRow {
         int x1;
         int x2;
@@ -132,7 +144,7 @@ class SasFileReaderJsonTest {
     }
 
     @Test
-    void  readDataWithMissingChar() throws IOException {
+    void readDataWithMissingChar() throws IOException {
         assertNotNull(mdmcReader);
         List<ObjectNode> objectNodeList = mdmcReader.readDataSetToObjectArray();
         ObjectNode row4 = objectNodeList.get(3);
@@ -147,6 +159,20 @@ class SasFileReaderJsonTest {
 
         assertEquals(1, pojo3.x1, "non-null values in a row with null should be intact");
         assertEquals("1", pojo3.x4, "non-null values in a row with null should be intact");
+    }
+
+    @Test
+    void readDateTime() throws IOException {
+        assertNotNull(dateTimeReader);
+        ArrayNode dateTimeDataset = dateTimeReader.readDataSetToArrayNode();
+        assertTrue(dateTimeDataset.size() > 0);
+    }
+
+    @Test
+    void readTime() throws IOException {
+        assertNotNull(timeReader);
+        ArrayNode timeDataset = timeReader.readDataSetToArrayNode();
+        assertTrue(timeDataset.size() > 0);
     }
 
 }
