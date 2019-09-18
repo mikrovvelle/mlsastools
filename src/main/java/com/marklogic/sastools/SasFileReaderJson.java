@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -18,6 +19,7 @@ public class SasFileReaderJson extends SasFileReaderImpl {
 
     private ObjectMapper mapper = new ObjectMapper();
     private JsonNodeFactory jsonNodeFactory = JsonNodeFactory.instance;
+    private SimpleDateFormat iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZZ");
 
     public SasFileReaderJson(InputStream inputStream) {
         super(inputStream);
@@ -41,8 +43,8 @@ public class SasFileReaderJson extends SasFileReaderImpl {
             else if (values.get(i) instanceof Long)
                 objectNode.put(column.getName(), (long) values.get(i));
             else if (values.get(i) instanceof Date) {
-                // TODO: convert to ISO dateTime?
-                String dateString = (values.get(i)).toString();
+                Date date = (Date) values.get(i);
+                String dateString = iso8601.format(date);
                 objectNode.put(column.getName(), dateString);
             }
             else
