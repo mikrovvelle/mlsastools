@@ -137,6 +137,14 @@ class SasFileReaderJsonTest {
     }
 
     @Test
+    void readMetaDataToObject() {
+        ObjectNode objectNode = mdoReader.readPropertiesToObject();
+        assertEquals("1993-06-05T19:59:17.671+0200", objectNode.get("dateCreated").textValue());
+        assertNull(objectNode.get("sessionEncoding").textValue());
+    }
+
+
+    @Test
     void readFileWithLabelToObjectNodeList() throws IOException {
         assertNotNull(fwlReader);
         List<ObjectNode> objectNodeList = fwlReader.readDataSetToObjectArray();

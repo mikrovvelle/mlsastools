@@ -1,11 +1,13 @@
 package com.marklogic.sastools;
 
 import com.epam.parso.Column;
+import com.epam.parso.SasFileProperties;
 import com.epam.parso.impl.SasFileReaderImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,7 +55,7 @@ public class SasFileReaderJson extends SasFileReaderImpl {
         return objectNode;
     }
 
-    List<ObjectNode> readDataSetToObjectArray() throws IOException {
+    public List<ObjectNode> readDataSetToObjectArray() throws IOException {
         List<ObjectNode> objectArray = new ArrayList<>();
         long maxRow = this.getSasFileProperties().getRowCount();
         for (long i = 0; i < maxRow; i++) {
@@ -69,5 +71,13 @@ public class SasFileReaderJson extends SasFileReaderImpl {
             arrayNode.add(this.readNextToObject());
         }
         return arrayNode;
+    }
+
+    public ObjectNode readPropertiesToObject() {
+        SasFileProperties properties = this.getSasFileProperties();
+        ObjectNode o = mapper.valueToTree(properties);
+        o.set("dateCreated", new TextNode(iso8601.format(properties.getDateCreated())));
+        o.set("dateModified", new TextNode(iso8601.format(properties.getDateModified())));
+        return o;
     }
 }
