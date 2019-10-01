@@ -7,12 +7,20 @@ plugins {
 group = 'com.marklogic'
 version = '0.0.1-SNAPSHOT'
 
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier 'sources'
+    from sourceSets.main.allJava
+}
+
 publishing {
     publications {
         mainJava(MavenPublication) {
             from components.java
         }
-
+        sourcesJava(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+        }
     }
     repositories {
         maven {
