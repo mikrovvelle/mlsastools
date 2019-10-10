@@ -23,6 +23,11 @@ public class SasFileReaderJson extends SasFileReaderImpl {
     private JsonNodeFactory jsonNodeFactory = JsonNodeFactory.instance;
     private SimpleDateFormat iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZZ");
 
+    /**
+     * constructor entry point for SAS-to-JSON conversion.
+     *
+     * @param inputStream should represent a SAS7BDAT file
+     */
     public SasFileReaderJson(InputStream inputStream) {
         super(inputStream);
     }
@@ -55,6 +60,15 @@ public class SasFileReaderJson extends SasFileReaderImpl {
         return objectNode;
     }
 
+    /**
+     * parse SAS7BDAT data set to ArrayList of JSON objects
+     *
+     * @return java.util.ArrayList of Jackson (JSON) objects:
+     *  - each member object represents one row from the SAS7BDAT data set
+     *  - object keys represent column names
+     *  - object values represent the cell value for that column in that row
+     * @throws IOException if parsing the SAS7BDAT format fails
+     */
     public List<ObjectNode> readDataSetToObjectArray() throws IOException {
         List<ObjectNode> objectArray = new ArrayList<>();
         long maxRow = this.getSasFileProperties().getRowCount();
@@ -64,6 +78,15 @@ public class SasFileReaderJson extends SasFileReaderImpl {
         return objectArray;
     }
 
+    /**
+     * parse SAS7BDAT data set to a single JSON Array
+     *
+     * @return Jackson ArrayNode (JSON array) of JSON objects:
+     *  - each child object represents one row from the SAS7BDAT data set
+     *  - object keys represent column names
+     *  - object values represent the cell value for that column in that row
+     * @throws IOException if parsing the SAS7BDAT format fails
+     */
     public ArrayNode readDataSetToArrayNode() throws IOException {
         long maxRow = this.getSasFileProperties().getRowCount();
         ArrayNode arrayNode = new ArrayNode(jsonNodeFactory, (int) maxRow);
@@ -73,6 +96,12 @@ public class SasFileReaderJson extends SasFileReaderImpl {
         return arrayNode;
     }
 
+    /**
+     * build a JSON object out of a SAS7BDAT file's properties.
+     *
+     * @return flat Jackson (JSON) object of properties which apply to the entire SAS7BDAT file.
+     * "dateCreated" and "dateModified" are converted to iso8601 dates.
+     */
     public ObjectNode readPropertiesToObject() {
         SasFileProperties properties = this.getSasFileProperties();
         ObjectNode o = mapper.valueToTree(properties);
