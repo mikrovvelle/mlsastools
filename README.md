@@ -40,7 +40,7 @@ If you will do your looping in Java, it's probably easiest to use this method
 ```java
 FileInputStream fis = new FileInputStream("/path/to/sasfile.sas7bdat");
 SasFileReaderJson sas = new SasFileReaderJson(fis);
-List<ObjectNode> oList = sasFileReader.readDataSetToObjectArray();
+List<ObjectNode> oList = sas.readDataSetToObjectArray();
 ```
 
 With that list, and an existing `jsonDocumentManager` from your `DatabaseClient`, you'd probably do something like this to insert all the JSON data:
@@ -61,7 +61,7 @@ If you will send the entire data set contents to MarkLogic in a single operation
 ```java
 FileInputStream fis = new FileInputStream("/path/to/sasfile.sas7bdat");
 SasFileReaderJson sas = new SasFileReaderJson(fis);
-ArrayNode arrayNode = sasFileReader.readDataSetToArrayNode();
+ArrayNode arrayNode = sas.readDataSetToArrayNode();
 ```
 
 Then, for example, if you have a Data Services interface, you'd call that for the insert:
