@@ -10,6 +10,8 @@ Which method you use depends on the constraints of your project.
 
 Additionally, you can extract the properties of a given SAS7BDAT file to a Jackson object, so it's easy to store that data in MarkLogic as well.
 
+The dirty work is done by the [epam/parso library](https://github.com/epam/parso), which turns SAS binary data into usable Java data. "Sastools" (this project), just takes parso's output and marshalls it into Jackson.
+
 ## Context
 
 You bring your own:
