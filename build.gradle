@@ -27,6 +27,14 @@ publishing {
             name = 'localRepo'
             url = "file://${buildDir}/repo"
         }
+        maven {
+            name = 'GitHubPackages'
+            url = "https://maven.pkg.github.com/mikrovvelle/mlsastools"
+            credentials {
+                username = project.findProperty("gpr.user") as String ?: System.getenv("USERNAME")
+                password = project.findProperty("gpr.key") as String ?: System.getenv("PASSWORD")
+            }
+        }
     }
 }
 
