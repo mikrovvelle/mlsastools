@@ -2,6 +2,7 @@ plugins {
     // Apply the java-library plugin to add support for Java Library
     id 'java-library'
     id 'maven-publish'
+    id 'net.researchgate.release' version '2.6.0'
 }
 
 group = 'com.marklogic'
