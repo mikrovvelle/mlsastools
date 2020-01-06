@@ -60,3 +60,5 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+afterReleaseBuild.dependsOn(publish)
